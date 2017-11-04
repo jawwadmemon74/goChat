@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto'
+}
+
+
+.appcontainer {
+  height: 100vh;
+
+}
+
+form input {
+  width: 100%;
+  display: block;
+  clear: both;
+}
+.appcontainer {
+  background: url('assets/images/chatbg.jpeg') center left no-repeat;
+  background-size: cover;
+}
+.loginForm {
+  height: 100vh;
+  background: #fff;
+  width: 100%;
+  max-width: 610px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+h3 {
+  font-size: 39px;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: #333;
+  margin-bottom: 0;
+  line-height: 42px;
+  margin-top: 20px;
+}
+
+.formWrap {
+  width: 470px;
+}
+
+.route-signup a {
+  color: #333;
+  text-decoration: none;
+  margin-top: 20px !important;
+  display: inline-block;
+}
+
+.loginButton button{
+  background: rgb(162, 37, 43) !important
+}
+small.red.error {
+  color: #ff0000;
+}
+.formWrap {
+  max-height: 66vh;
+  overflow-y: auto;
+  padding-right: 20px;
+}
