@@ -4,7 +4,7 @@ import {firebaseApp, db, auth, storageKey, isAuthenticated} from './config/db_co
 import Home from './components/home/home';
 import Login from './components/login/login';
 import Signup from './components/signup/signup';
-import ChatRoom from './components/chatroom/chatroom';
+import Chatroom from './components/chatroom/chatroom';
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 class App extends Component {
@@ -30,7 +30,7 @@ class App extends Component {
         <div className="appcontainer">
           <Route exact path="/" component={Login} />
           <Route exact path="/signup" component={Signup} />
-          <MatchWhenAuthorized pattern="/chatroom" component={ChatRoom} />
+          <MatchWhenAuthorized pattern="/chatroom" component={Chatroom} />
           
         {/* <ul>
           <li><Link to="/">Home</Link></li>
@@ -47,7 +47,7 @@ class App extends Component {
 const MatchWhenAuthorized = ({component: Component}) => (
   <Route render={renderProps => (
     isAuthenticated() ? (
-      <ChatRoom />
+      <Chatroom />
     ) : (
       <Redirect to={ {
         pathname: '/',

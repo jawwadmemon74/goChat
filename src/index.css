@@ -64,3 +64,121 @@ small.red.error {
   overflow-y: auto;
   padding-right: 20px;
 }
+main {
+  float: left;
+  width: 100%;
+  background: #f9f9f9;
+}
+
+.containerChat {
+  max-width: 1170px;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.usersList {
+  background: #fff;
+  border: 1px solid #ccc;
+  width: 30%;
+  float: left;
+  border-radius: 10px;
+}
+
+.userName {
+    text-align: left;
+    padding-left: 80px !important;
+    line-height: 26px !important;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    transition: all ease 300ms;
+}
+.usersList.pull-left {
+  padding: 10px 30px;
+  box-sizing: border-box;
+}
+
+.userName {
+    text-align: left;
+    padding-left: 80px !important;
+    line-height: 26px !important;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    transition: all ease 300ms;
+}
+
+.usersList.pull-left {
+  padding: 10px 30px 10px 24px;
+  box-sizing: border-box;
+}
+
+.usersList {
+    max-height: calc(100vh - 272px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 0;
+    border-left: 0;
+    direction: rtl;
+}
+
+.usersList {
+    margin-bottom: 32px;
+}
+
+.userName:hover {
+    background: #f1f1f1;
+}
+.usersList > div > div:nth-child(3n+3) > div > div {
+  background-color: #61DAFB !important;
+}
+
+.usersList > div > div:nth-child(2n+2) > div > div {
+  background-color: #EC407A !important;
+}
+.userName svg {
+  margin: 17px 0px !important;
+}
+.userConvo {
+  height: calc(100vh - 272px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 0;
+  border-left: 0;
+  display: inline-block;
+  width: 69%;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+.msg-submit {
+  position: absolute;
+  bottom: 0;
+  padding: 5px 20px;
+}
+
+.userConvo {
+  position: relative;
+}
+.msg-submit {
+  position: absolute;
+  bottom: 0px;
+  padding: 5px 20px;
+  width: 100%;
+  background: #f9f9f9
+}
+
+.submitInput {
+    width: 71% !important;
+    position: relative;
+    top: 6px;
+    float: left;
+}
+
+.submitBtn {
+    width: 20%;
+    margin-left: 1%;
+    margin: 10px 0 !important;
+}
+.submitBtn button {
+  background: rgb(162, 37, 43) !important
+}

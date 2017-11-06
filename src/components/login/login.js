@@ -24,31 +24,34 @@ class Login extends Component{
             email: '',
             password: '',
             redirectAfterLogin: false,
-            loginError: null
         }
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    // Requesting to server
+    // Handelling Login 
     handleSubmit = (evt) => {
         evt.preventDefault();
-         if(this.state.email === '' || this.state.password === ''){
-            this.setState({loginError : true})
-         } else if(this.state.email !== '' && this.state.password !== ''){
-            auth.signInWithEmailAndPassword(this.state.email, this.state.password).then(()=> 
-                 this.setState({
-                     redirectAfterLogin: true,
-                     loginError: false
-                })
+        var errorCode;
+        var errorMessage;
+        if(this.state.email !== '' && this.state.password !== ''){
+            auth.signInWithEmailAndPassword(this.state.email, this.state.password).catch(function(error) {
+                // Handle Errors here.
+                 errorCode = error.code;
+                 errorMessage = error.message;
+                    alert(errorMessage);
+                // ...
+              }).then(()=>  {
+                    if(!(errorCode)){
+                        this.setState({
+                            redirectAfterLogin: true,
+                        })
+                    }
+                }
             )
         }
-        
     }
 
-    
-
     render(){
-       
         const {from} = this.props.location.state || '/';
         const {redirectAfterLogin} = this.state;
         return(
@@ -66,14 +69,12 @@ class Login extends Component{
                     <h3>Login !</h3>
                     
                         <form onSubmit={this.handleSubmit}>
-                            <TextField floatingLabelText="Email Address" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.email} onChange={e => this.setState({email: e.target.value})} /><br />
-                            <TextField floatingLabelText="Password" type="password" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.password} onChange={e => this.setState({password: e.target.value})} /><br />
+                            <TextField type="email" required floatingLabelText="Email Address" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.email} onChange={e => this.setState({email: e.target.value})} /><br />
+                            <TextField required floatingLabelText="Password" type="password" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.password} onChange={e => this.setState({password: e.target.value})} /><br />
                             <RaisedButton type="submit" className="loginButton" label="Sign In" primary={true} style={styles.button} />
                         </form>
                        <br />
-                       {this.state.loginError ? <small className="red error">Username or Password is invalid</small>
-                        : ''
-                        }
+                    
                         <div className="route-signup">
                             <Link to="/signup">Don't have account?</Link>
                         </div> 

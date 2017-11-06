@@ -10,7 +10,8 @@ let config = {
 export const firebaseApp = firebase.initializeApp(config);
 export const db = firebaseApp.database(); //the real-time database
 export const auth = firebaseApp.auth(); //the firebase auth namespace
-export const user = auth.currentUser;
+export const fireBaseUser = firebase.auth().currentUser;
+console.log(fireBaseUser);
 export const storageKey = '4325423574235693';
 
 export const isAuthenticated = () => {
