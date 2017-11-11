@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import GoChatLogo from '../../assets/images/logo.png'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
-import {firebaseApp, db, auth, storageKey, isAuthenticated} from '../../config/db_config';
+import {Link} from 'react-router-dom'
+import {auth, isAuthenticated} from '../../config/db_config';
 
 const styles = ({
     button: {
@@ -57,30 +57,26 @@ class Login extends Component{
         return(
             <div>
             {redirectAfterLogin && (
-          <Redirect to={from || '/chatroom'}/>
-        )}
+                window.location.assign('/chatroom')
+            )}
         {from && (
           <p>You must log in to view the page at {from.pathname}</p>
         )}
             <div className="loginForm">
-            <img src={GoChatLogo} />
+            <img alt="Site logo" src={GoChatLogo} />
             {isAuthenticated() ? <p>You are Logged In. Click Here to go to your <a href="/chatroom">chat room</a></p> :
                 <div class="formWrap">
                     <h3>Login !</h3>
-                    
-                        <form onSubmit={this.handleSubmit}>
-                            <TextField type="email" required floatingLabelText="Email Address" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.email} onChange={e => this.setState({email: e.target.value})} /><br />
-                            <TextField required floatingLabelText="Password" type="password" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.password} onChange={e => this.setState({password: e.target.value})} /><br />
-                            <RaisedButton type="submit" className="loginButton" label="Sign In" primary={true} style={styles.button} />
-                        </form>
-                       <br />
-                    
-                        <div className="route-signup">
-                            <Link to="/signup">Don't have account?</Link>
-                        </div> 
-                   
+                    <form onSubmit={this.handleSubmit}>
+                        <TextField type="email" required floatingLabelText="Email Address" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.email} onChange={e => this.setState({email: e.target.value})} /><br />
+                        <TextField required floatingLabelText="Password" type="password" style={styles.input} underlineStyle={styles.inputBorder} value={this.state.password} onChange={e => this.setState({password: e.target.value})} /><br />
+                        <RaisedButton type="submit" className="loginButton" label="Sign In" primary={true} style={styles.button} />
+                    </form>
+                    <br />
+                    <div className="route-signup">
+                        <Link to="/signup">Don't have account?</Link>
+                    </div> 
                 </div>
-        
                 }
             </div>
             </div>

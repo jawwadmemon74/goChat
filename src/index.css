@@ -30,7 +30,7 @@ form input {
   height: 100vh;
   background: #fff;
   width: 100%;
-  max-width: 610px;
+  max-width: 480px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -48,7 +48,7 @@ h3 {
 }
 
 .formWrap {
-  width: 470px;
+  width: 390px;
 }
 
 .route-signup a {
@@ -334,4 +334,8 @@ h1.App-title {
 
 .messageWrap[usertype="opposite"] {
   float: right;
+}
+.formWrap h3 {
+  margin-top: 0;
+  font-size: 34px;
 }

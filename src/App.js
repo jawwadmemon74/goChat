@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 
-import {firebaseApp, db, auth, storageKey, isAuthenticated} from './config/db_config';
-import Home from './components/home/home';
+import {auth, storageKey, isAuthenticated} from './config/db_config';
 import Login from './components/login/login';
 import Signup from './components/signup/signup';
 import Chatroom from './components/chatroom/chatroom';
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 
 class App extends Component {
   state = {

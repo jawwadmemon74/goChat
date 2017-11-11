@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import GoChatLogo from '../../assets/images/logo.png'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
-import {firebaseApp, db, auth, storageKey, isAuthenticated, user} from '../../config/db_config';
+import {Link} from 'react-router-dom'
+import {firebaseApp, auth, isAuthenticated} from '../../config/db_config';
 
 
 const styles = ({
@@ -37,7 +37,7 @@ class Signup extends Component{
         if(this.state.signupPass === this.state.signupPass2){
             auth.createUserWithEmailAndPassword(this.state.signupEmail, this.state.signupPass).catch(function(error) {
                 // Handle Errors here.
-                var errorCode = error.code;
+                // var errorCode = error.code;
                 var errorMessage = error.message;
                 alert(errorMessage);
                 // ...
@@ -47,14 +47,13 @@ class Signup extends Component{
                         firstname: this.state.firstname,
                         lastname: this.state.lastname,
                         email: this.state.signupEmail,
-                    }),
+                    })
                     this.setState({redirectAfterSignup: true})
-                 }
-               
+                }
                 } 
             )   
         } else {
-            alert('Password does not match ! ')
+            alert('Password does not match');
         }
     }
     render(){
@@ -65,13 +64,13 @@ class Signup extends Component{
         return(
             <div>
                 {redirectAfterSignup && (
-                <Redirect to={from || '/chatroom'}/>
-              )}
+                    window.location.assign('/chatroom')
+                )}
               {from && (
                 <p>You must log in to view the page at {from.pathname}</p>
               )}
             <div className="loginForm">
-                <img src={GoChatLogo} />
+                <img alt="Site Logo" src={GoChatLogo} />
                 {isAuthenticated() ? <p>You are Signed up and Logged In. Click Here to go to your <a href="/chatroom">chat room</a></p> :
                 <div class="formWrap">
                     

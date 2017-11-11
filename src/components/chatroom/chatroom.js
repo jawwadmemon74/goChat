@@ -1,15 +1,11 @@
 import React, {Component} from 'react';
-import logo from '../../logo.svg';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
 import Avatar from 'material-ui/Avatar';
-import {blue300, indigo900, orange200, deepOrange300, pink400, purple500, white} from 'material-ui/styles/colors';
+import {purple500, white} from 'material-ui/styles/colors';
 import '../../App.css';
-import firebase from 'firebase';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
-import {firebaseApp, db, auth, storageKey, isAuthenticated, authData, user} from '../../config/db_config';
+import {db, auth} from '../../config/db_config';
 
 const styles = ({
     button: {
@@ -20,17 +16,21 @@ const styles = ({
     }
 })
 
+
+
 class Chatroom extends Component {
+    
     constructor(props){
         super(props);
         this.users = db.ref().child('users');
         this.messages = db.ref().child('messages/' + localStorage.getItem('localuserid'));
         this.handleLogOut = this.handleLogOut.bind(this);
         this.handlerSubmitMessage = this.handlerSubmitMessage.bind(this);
+        this.msgPreventDefault = this.msgPreventDefault.bind(this)
         this.handlerConvoChange = this.handlerConvoChange.bind(this)
         
         this.state = {
-            currentUseris: localStorage.getItem('localuserid'),
+            currentUseris: '',
             loggedinuser: [],
             users: [],
             messages: [],
@@ -40,12 +40,16 @@ class Chatroom extends Component {
         }
     }
 
-    componentDidMount(){
+    componentWillMount(){
+        this.forceUpdate();
         var loggedinuserEmpty = this.state.loggedinuser;
         const oldUsers = this.state.users;
         const oldMessages = this.state.messages;
         auth.onAuthStateChanged((user) => {
             if (user) {
+                this.setState({
+                    currentUseris : localStorage.getItem('localuserid')
+                })
                 var uid = user.uid;
                 db.ref().child('users/'+ uid).on('value', snap => {
                     loggedinuserEmpty.push({
@@ -72,23 +76,46 @@ class Chatroom extends Component {
                 })
             }
         }) 
+        // this.messages.on('child_added', snap => {
+        //     if(this.state.clickedUser !== ''){
+        //     var getClickedUser = snap.child(this.state.clickedUser).val();
+        //     if(oldMessages){
+        //     var oldMessagesl = oldMessages.length;
+            
+        //     oldMessages.splice(0, oldMessagesl)}
+            
+        //         for(var i=0; i<Object.keys(getClickedUser).length;i++){
+        //             var getKeys = Object.keys(getClickedUser);
+        //             oldMessages.push({
+        //                 uid: snap.child( '/' + this.state.clickedUser + '/' +getKeys[i]+'/uid').val(),
+        //                 time: snap.child( '/' + this.state.clickedUser + '/' +getKeys[i]+'/time').val(),
+        //                 firstname: snap.child( '/' + this.state.clickedUser + '/' +getKeys[i]+'/firstname').val(),
+        //                 lastname: snap.child('/' + this.state.clickedUser + '/' +getKeys[i]+'/lastname').val(),
+        //                 email: snap.child('/' + this.state.clickedUser + '/' +getKeys[i]+'/email').val(),
+        //                 message: snap.child('/' + this.state.clickedUser + '/' +getKeys[i]+'/message').val(),
+        //             })
+        //         }
+        //         this.setState({
+        //             messages: oldMessages
+        //         })
+        //     }
+        // })
     }
 
     handleLogOut= () => {
         auth.signOut();
     }
-    handlerConvoChange(clickedUserId, clickedUserFName, clickedUserLName) {
+    handlerConvoChange = (clickedUserId, clickedUserFName, clickedUserLName) => {
         var oldMessages = this.state.messages;
         this.setState({
             clickedUser: clickedUserId,
             clickedUserName: clickedUserFName + ' ' + clickedUserLName
         });
-        
+        // alert(clickedUserId)
         this.messages.on('value', snap => {
             var getClickedUser = snap.child(clickedUserId).val();
             if(oldMessages){
             var oldMessagesl = oldMessages.length;
-            
             oldMessages.splice(0, oldMessagesl)}
             if(getClickedUser !== null){
                  for(var i=0; i<Object.keys(getClickedUser).length;i++){
@@ -104,15 +131,36 @@ class Chatroom extends Component {
                 }
                 this.setState({
                     messages: oldMessages
-                })
+                }, function(){
+                    const messagesList = document.getElementById('msgList');
+                    // alert(messagesList)
+                    const shouldScroll = messagesList.scrollTop + messagesList.clientHeight === messagesList.scrollHeight;
+                    if (!shouldScroll) {
+                        messagesList.scrollTop = messagesList.scrollHeight;
+                    }
+                } )
+                
             }
+            
         })
+    
+    }
+    msgPreventDefault = (evt) => {
+        evt.preventDefault();
+        const messagesList = document.getElementById('msgList');
+        // alert(messagesList)  
+        const shouldScroll = messagesList.scrollTop + messagesList.clientHeight === messagesList.scrollHeight;
+        if (!shouldScroll) {
+            messagesList.scrollTop = messagesList.scrollHeight;
+          }
     }
     handlerSubmitMessage(userMessage) {
-        const oldMessages = this.state.messages;
+        // const oldMessages = this.state.messages;
         if(this.state.clickedUser === ''){
-            alert('Please click on any user to talk with') } else {
-        this.setState({messages:[]})
+            
+                alert('Please click on any user to talk with') 
+            } else {
+                if(this.state.newMessage !== ''){
         auth.onAuthStateChanged((user) => {
             if (user) {
               
@@ -142,7 +190,10 @@ class Chatroom extends Component {
                 })
             }
         }) 
+    } else {
+        alert('You are submitting an empty message. Please write a message to proceed !');
     }
+}
     }
     
     render(){
@@ -170,8 +221,14 @@ class Chatroom extends Component {
                             
                             this.state.users.map((singleUser)=>{
                                 return(
-                                    <div key={singleUser.id} clicked={singleUser.id === this.state.clickedUser ? 'true' : 'false'} onClick={() => this.handlerConvoChange(singleUser.id, singleUser.firstname, singleUser.lastname)} className="userName" id={singleUser.id}><span><Avatar color={white} backgroundColor={purple500} size={50}>{singleUser.firstname? singleUser.firstname.slice(0,1).toUpperCase(): 'U'}</Avatar><strong class="username">{singleUser.firstname && singleUser.lastname ? singleUser.firstname + ' ' + singleUser.lastname : 'Unknown' }</strong><CommunicationChatBubble /> </span></div>
-                                 
+                                    localStorage.getItem('localuserid') === singleUser.id  ? '' : 
+                                     <div key={singleUser.id} clicked={singleUser.id === this.state.clickedUser ? 'true' : 'false'} onClick={() => this.handlerConvoChange(singleUser.id, singleUser.firstname, singleUser.lastname)} className="userName" id={singleUser.id}>
+                                        <span>
+                                            <Avatar color={white} backgroundColor={purple500} size={50}>{singleUser.firstname? singleUser.firstname.slice(0,1).toUpperCase(): 'U'}</Avatar>
+                                            <strong class="username">{singleUser.firstname && singleUser.lastname ? singleUser.firstname + ' ' + singleUser.lastname : 'Unknown' }</strong>
+                                            <CommunicationChatBubble /> 
+                                        </span>
+                                    </div>
                                 );
                             })
                         }
@@ -184,7 +241,7 @@ class Chatroom extends Component {
                     : ''}
                         
                             {this.state.clickedUser ?
-                                <div className="convo-inner">{
+                                <div id="msgList" className="convo-inner">{
                                 this.state.messages.map((messagesingle, ind)=>{
                                    
                                  
@@ -220,14 +277,16 @@ class Chatroom extends Component {
                                         </div>
                                         <h2>Go Chat Home</h2>
                                     <h6>Watch the video to learn how to use Go Chat</h6>
-                                    <iframe width="450" height="300" src="https://www.youtube.com/embed/HD8myvOBAhw" frameborder="0" gesture="media" allowfullscreen></iframe>
+                                    <iframe title="doc-video" width="530" height="300" src="https://www.youtube.com/embed/HD8myvOBAhw" frameborder="0" gesture="media" allowfullscreen></iframe>
                                     </div>
                                 } 
                      
                         {this.state.clickedUser ?
                         <div className="msg-submit">
-                            <TextField className="submitInput" value={this.state.newMessage} onChange={e => {this.setState({newMessage: e.target.value})}} hintText="Write a little Message Here ..." />
-                            <RaisedButton onClick={()=> this.handlerSubmitMessage(this.state.newMessage)} className="submitBtn" type="submit" label="Send" primary={true} style={styles.button} />
+                            <form onSubmit={this.msgPreventDefault}>
+                                <TextField className="submitInput" value={this.state.newMessage} onChange={e => {this.setState({newMessage: e.target.value})}} hintText="Write a little Message Here ..." />
+                                <RaisedButton onClick={()=> this.handlerSubmitMessage(this.state.newMessage)} className="submitBtn" type="submit" label="Send" primary={true} style={styles.button} />
+                            </form>
                         </div> : '' }
                     </div>
                 </div>
