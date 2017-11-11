@@ -6,7 +6,12 @@ body {
   font-family: 'Roboto'
 }
 
-
+.App-header {
+  background-color: #444;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
 .appcontainer {
   height: 100vh;
 
@@ -113,42 +118,33 @@ main {
 }
 
 .usersList {
-    max-height: calc(100vh - 272px);
+    height: calc(100vh - 272px);
     overflow-x: hidden;
     overflow-y: auto;
     border-radius: 0;
     border-left: 0;
     direction: rtl;
 }
+.docs {
+  margin-top: 80px;
+}
 
 .usersList {
     margin-bottom: 32px;
 }
 
-.userName:hover {
-    background: #f1f1f1;
+.userName:hover, .userName[clicked="true"] {
+  background: #f1f1f1;
 }
-.usersList > div > div:nth-child(3n+3) > div > div {
+.usersList div.userName:nth-child(3n+3) > span > div:first-child  {
   background-color: #61DAFB !important;
 }
 
-.usersList > div > div:nth-child(2n+2) > div > div {
+.usersList div.userName:nth-child(2n+2) > span > div:first-child  {
   background-color: #EC407A !important;
 }
 .userName svg {
   margin: 17px 0px !important;
-}
-.userConvo {
-  height: calc(100vh - 272px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  border-radius: 0;
-  border-left: 0;
-  display: inline-block;
-  width: 69%;
-  background: #fff;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
 }
 .msg-submit {
   position: absolute;
@@ -158,20 +154,23 @@ main {
 
 .userConvo {
   position: relative;
+  background: #fff
 }
 .msg-submit {
   position: absolute;
   bottom: 0px;
   padding: 5px 20px;
   width: 100%;
-  background: #f9f9f9
+  background: #f9f9f9;
+  box-sizing: border-box;
 }
 
 .submitInput {
-    width: 71% !important;
-    position: relative;
-    top: 6px;
-    float: left;
+  width: 78% !important;
+  position: relative;
+  top: 6px;
+  float: left;
+  margin-right: 2%;
 }
 
 .submitBtn {
@@ -179,6 +178,160 @@ main {
     margin-left: 1%;
     margin: 10px 0 !important;
 }
-.submitBtn button {
-  background: rgb(162, 37, 43) !important
+.submitBtn button, .redbtn button {
+  background: rgb(162, 37, 43) !important 
+}
+
+.userConvo {
+  width: 69%;
+  float: right;
+  height: 100vh;
+  height: calc(100vh - 275px);
+  border: 1px solid #ccc;
+}
+.userConvo .convo-inner {
+  height: calc(100vh - 400px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 0;
+  border-left: 0;
+  display: inline-block;
+  width: 100%;
+  background: #fff;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+h1.username {
+  margin-top: 0;
+  text-transform: capitalize;
+  margin: 0;
+  font-size: 43px;
+}
+
+h1.App-title {
+  margin-top: 6px;
+  font-size: 20px;
+}
+.userName {
+  direction: ltr;
+  padding: 0 !important;
+}
+
+.userName span {
+  display: flex !important;
+  align-items: center !important;
+  width: 100%;
+}
+
+.userName strong {
+  float: left;
+  text-align: left;
+  width: 65%;
+  padding-left: 20px;
+}
+
+.userName svg {
+  float: right;
+  color: #bbb !important;
+}
+.convo-header h3 {
+  margin: 0;
+  padding: 10px;
+  font-size: 30px;
+  text-transform: capitalize;
+  text-shadow: 3px 3px 3px #ccc;
+  background: #f1f1f1;
+}
+.messageAvatar {
+  width: 100%;
+  max-width: 55px;
+  float: left;
+}
+
+.msg-text {
+  float: left;
+  width: calc(100% - 79px);
+  background: rgba(0, 175, 240, 0.35);
+  float: right;
+  border-radius: 6px;
+  text-align: left;
+  padding: 13px;
+  box-sizing: border-box;
+}
+
+.messageSingle {
+  width: 100%;
+  float: left;
+  padding: 10px 30px;
+  box-sizing: border-box;
+}
+
+.msg-name {
+  float: left;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.msg-name h4 {
+  margin: 0;
+}
+
+.msg-coretext p {
+  margin-bottom: 0;
+  font-size: 15px;
+}
+
+.msg-time span {
+  color: #777;
+  font-size: 12px;
+  float: right;
+}
+
+.convo-inner {
+  padding: 30px 0;
+}
+.getchat {
+  float: left;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  background: rgba(255, 195, 23, 0.68);
+  text-align: left;
+  padding: 0 30px;
+  box-sizing: border-box;
+  font-weight: 700;
+}
+
+.docs {
+  margin-top: 71px;
+}
+
+.docs h2 {
+  margin-bottom: 0;
+}
+
+.docs h6 {
+  margin-top: 4px;
+  font-size: 16px;
+  margin-bottom: 22px;
+  font-weight: 300;
+}
+.messageWrap[usertype="opposite"] .messageAvatar {
+  float: right;
+}
+
+.messageWrap[usertype="opposite"] .msg-text {
+  float: left;
+}
+
+.messageWrap[usertype="opposite"] .msg-text {
+  background: #eee;
+}
+
+.messageWrap {
+  width: 80%;
+}
+
+.messageWrap[usertype="opposite"] {
+  float: right;
 }

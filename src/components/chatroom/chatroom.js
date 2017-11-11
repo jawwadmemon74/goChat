@@ -5,15 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import Avatar from 'material-ui/Avatar';
-import {
-    blue300,
-    indigo900,
-    orange200,
-    deepOrange300,
-    pink400,
-    purple500,
-    white
-  } from 'material-ui/styles/colors';
+import {blue300, indigo900, orange200, deepOrange300, pink400, purple500, white} from 'material-ui/styles/colors';
 import '../../App.css';
 import firebase from 'firebase';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
@@ -21,38 +13,34 @@ import {firebaseApp, db, auth, storageKey, isAuthenticated, authData, user} from
 
 const styles = ({
     button: {
-        marginTop: 20,
+        marginTop: 10,
     },
-
-  
     input: {
         width: '100%'
     }
 })
 
-
-  
-
 class Chatroom extends Component {
     constructor(props){
         super(props);
         this.users = db.ref().child('users');
-        this.messages = db.ref().child('messages');
+        this.messages = db.ref().child('messages/' + localStorage.getItem('localuserid'));
         this.handleLogOut = this.handleLogOut.bind(this);
-        this.handlerSubmitMessage = this.handlerSubmitMessage.bind(this)
-        // this.handlerUserClick = this.handlerUserClick.bind(this);
-        this.onItemClickHandler = this.onItemClickHandler.bind(this);
+        this.handlerSubmitMessage = this.handlerSubmitMessage.bind(this);
+        this.handlerConvoChange = this.handlerConvoChange.bind(this)
+        
         this.state = {
+            currentUseris: localStorage.getItem('localuserid'),
             loggedinuser: [],
             users: [],
             messages: [],
-            newMessage: ''
+            newMessage: '',
+            clickedUser: '',
+            clickedUserName: ''
         }
-     
-        
     }
 
-    componentWillMount(){
+    componentDidMount(){
         var loggedinuserEmpty = this.state.loggedinuser;
         const oldUsers = this.state.users;
         const oldMessages = this.state.messages;
@@ -82,36 +70,79 @@ class Chatroom extends Component {
                         users: oldUsers
                     })
                 })
-                this.messages.on('child_added', snap => {
+            }
+        }) 
+    }
+
+    handleLogOut= () => {
+        auth.signOut();
+    }
+    handlerConvoChange(clickedUserId, clickedUserFName, clickedUserLName) {
+        var oldMessages = this.state.messages;
+        this.setState({
+            clickedUser: clickedUserId,
+            clickedUserName: clickedUserFName + ' ' + clickedUserLName
+        });
+        
+        this.messages.on('value', snap => {
+            var getClickedUser = snap.child(clickedUserId).val();
+            if(oldMessages){
+            var oldMessagesl = oldMessages.length;
+            
+            oldMessages.splice(0, oldMessagesl)}
+            if(getClickedUser !== null){
+                 for(var i=0; i<Object.keys(getClickedUser).length;i++){
+                    var getKeys = Object.keys(getClickedUser);
                     oldMessages.push({
-                        id: snap.key,
-                        uid: user.uid,
+                        uid: snap.child( '/' + clickedUserId + '/' +getKeys[i]+'/uid').val(),
+                        time: snap.child( '/' + clickedUserId + '/' +getKeys[i]+'/time').val(),
+                        firstname: snap.child( '/' + clickedUserId + '/' +getKeys[i]+'/firstname').val(),
+                        lastname: snap.child('/' + clickedUserId + '/' +getKeys[i]+'/lastname').val(),
+                        email: snap.child('/' + clickedUserId + '/' +getKeys[i]+'/email').val(),
+                        message: snap.child('/' + clickedUserId + '/' +getKeys[i]+'/message').val(),
+                    })
+                }
+                this.setState({
+                    messages: oldMessages
+                })
+            }
+        })
+    }
+    handlerSubmitMessage(userMessage) {
+        const oldMessages = this.state.messages;
+        if(this.state.clickedUser === ''){
+            alert('Please click on any user to talk with') } else {
+        this.setState({messages:[]})
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+              
+                var uid = user.uid;
+                db.ref().child('users/'+ uid).on('value', snap => {
+                   
+                    this.messages.child( '/' + this.state.clickedUser).push().set({
+                        uid: this.state.currentUseris,
+                        time: new Date().toLocaleTimeString(),
                         firstname: snap.child('firstname').val(),
                         lastname: snap.child('lastname').val(),
                         email: snap.child('email').val(),
-                        message: snap.val().userMessage,
-                    })
+                        message: userMessage,
+                        // postedto: this.state.clickedUser
+                    });
+                    db.ref().child('messages/'+ this.state.clickedUser + '/' + localStorage.getItem('localuserid')).push().set({
+                        uid: this.state.currentUseris,
+                        time: new Date().toLocaleTimeString(),
+                        firstname: snap.child('firstname').val(),
+                        lastname: snap.child('lastname').val(),
+                        email: snap.child('email').val(),
+                        message: userMessage,
+                    });
                     this.setState({
-                        messages: oldMessages
+                         newMessage: ''
                     })
                 })
             }
         }) 
     }
-
-    onItemClickHandler(){
-        // var clickedUser = document.getElementById(userid);
-    }
-    
-    handleLogOut= () => {
-        auth.signOut();
-    }
-
-    handlerSubmitMessage(userMessage) {
-        this.messages.push().set({message: userMessage});
-        this.setState({
-            newMessage: ''
-        })
     }
     
     render(){
@@ -122,8 +153,10 @@ class Chatroom extends Component {
                     this.state.loggedinuser.map((getUserCurrent)=>{
                         return(
                             <div key={getUserCurrent.id} className="header-inner">
-                                <img src={logo} className="App-logo" alt="logo" />
-                                <h1 className="App-title">Welcome {getUserCurrent.firstname} {getUserCurrent.lastname} to Go Chat</h1>
+                                {/* <img src={logo} className="App-logo" alt="logo" /> */}
+                                <h1 className="username">{getUserCurrent.firstname} {getUserCurrent.lastname}</h1>
+                                <h1 className="App-title">Welcome to Go Chat  </h1>
+                                <RaisedButton onClick={()=> this.handleLogOut()} label="Logout" primary={true} className="redbtn" style={styles.button} />
                             </div>
                         );
                     })
@@ -132,33 +165,70 @@ class Chatroom extends Component {
             <main>
                 <div className="containerChat">
                     <div className="usersList pull-left">
-                        <List onClick={this.onItemClickHandler.bind(this)}>
+                        {/* <List onClick={this.onItemClickHandler.bind(this)}> */}
                         {
+                            
                             this.state.users.map((singleUser)=>{
                                 return(
-                                    <ListItem key={singleUser.id} className="userName" id={singleUser.id} disabled={true} rightIcon={<CommunicationChatBubble />} leftAvatar={<Avatar color={white} backgroundColor={purple500} size={50}>{singleUser.firstname? singleUser.firstname.slice(0,1).toUpperCase(): 'U'}</Avatar>}>{singleUser.firstname && singleUser.lastname ? singleUser.firstname + ' ' + singleUser.lastname : 'Unknown' }</ListItem>
+                                    <div key={singleUser.id} clicked={singleUser.id === this.state.clickedUser ? 'true' : 'false'} onClick={() => this.handlerConvoChange(singleUser.id, singleUser.firstname, singleUser.lastname)} className="userName" id={singleUser.id}><span><Avatar color={white} backgroundColor={purple500} size={50}>{singleUser.firstname? singleUser.firstname.slice(0,1).toUpperCase(): 'U'}</Avatar><strong class="username">{singleUser.firstname && singleUser.lastname ? singleUser.firstname + ' ' + singleUser.lastname : 'Unknown' }</strong><CommunicationChatBubble /> </span></div>
                                  
                                 );
                             })
                         }
-                        </List>
                     </div>
                     <div className="userConvo pull-right">
-                        <div className="convo-inner">
-                            {
-                                this.state.messages.map((singleMessage)=>{
+                    {this.state.clickedUserName ? 
+                        <div className="convo-header">
+                                <h3>{this.state.clickedUserName === 'null null' ? 'Unknown User' : this.state.clickedUserName }</h3>
+                        </div>
+                    : ''}
+                        
+                            {this.state.clickedUser ?
+                                <div className="convo-inner">{
+                                this.state.messages.map((messagesingle, ind)=>{
+                                   
+                                 
                                     return(
-                                        <div className="messageWrap">
-                                            <p>{singleMessage.message}</p>
+                                       
+                                        <div key={ind} usertype={localStorage.getItem('localuserid') === messagesingle.uid ? 'same' : 'opposite' } className="messageWrap">
+                                            {console.log(messagesingle.uid)}
+                                            <div className="messageSingle">
+                                                <div className="messageAvatar">
+                                                    <Avatar color={white} backgroundColor={purple500} size={50}>{messagesingle.firstname? messagesingle.firstname.slice(0,1).toUpperCase(): 'U'}</Avatar>
+                                                </div>
+                                                <div className="msg-text">
+                                                    <div className="msg-name">
+                                                        <h4>{messagesingle.firstname} {messagesingle.lastname}</h4>
+                                                    </div>
+                                                    <div className="msg-coretext">
+                                                        <p>{messagesingle.message}</p>
+                                                    </div>
+                                                    <div className="msg-time">
+                                                        <span>{messagesingle.time}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     );
-                                })
-                            }
-                        </div>
+                                
+                                }) } 
+                                </div>
+                                :
+                                    <div className="docs">
+                                        <div className="getchat">
+                                            <p>Click on any user to start chating :) </p>
+                                        </div>
+                                        <h2>Go Chat Home</h2>
+                                    <h6>Watch the video to learn how to use Go Chat</h6>
+                                    <iframe width="450" height="300" src="https://www.youtube.com/embed/HD8myvOBAhw" frameborder="0" gesture="media" allowfullscreen></iframe>
+                                    </div>
+                                } 
+                     
+                        {this.state.clickedUser ?
                         <div className="msg-submit">
                             <TextField className="submitInput" value={this.state.newMessage} onChange={e => {this.setState({newMessage: e.target.value})}} hintText="Write a little Message Here ..." />
                             <RaisedButton onClick={()=> this.handlerSubmitMessage(this.state.newMessage)} className="submitBtn" type="submit" label="Send" primary={true} style={styles.button} />
-                        </div>
+                        </div> : '' }
                     </div>
                 </div>
             </main>
