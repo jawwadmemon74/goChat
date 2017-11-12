@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Avatar from './material-ui/Avatar';
-import {purple500, white} from 'material-ui/styles/colors';
+import TextField from '/node_modules/material-ui/TextField';
+import RaisedButton from '/node_modules/material-ui/RaisedButton';
+import Avatar from '/node_modules/material-ui/Avatar';
+import {purple500, white} from '/node_modules/material-ui/styles/colors';
 import '../../App.css';
-import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
+import CommunicationChatBubble from '/node_modules/material-ui/svg-icons/communication/chat-bubble';
 import {db, auth} from '../../config/db_config';
 
 const styles = ({
