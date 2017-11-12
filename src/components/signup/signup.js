@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import TextField from './material-ui/TextField';
-import RaisedButton from './material-ui/RaisedButton';
+import TextField from '../../node_modules/material-ui/TextField';
+import RaisedButton from '../../node_modules/material-ui/RaisedButton';
 import GoChatLogo from '../../assets/images/logo.png'
 import {Link} from 'react-router-dom'
 import {firebaseApp, auth, isAuthenticated} from '../../config/db_config';
