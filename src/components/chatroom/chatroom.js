@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import Avatar from 'material-ui/Avatar';
+import Avatar from './material-ui/Avatar';
 import {purple500, white} from 'material-ui/styles/colors';
 import '../../App.css';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
